@@ -1,4 +1,3 @@
-
 /*
  * ESERCIZI SU PLASM 
  */
@@ -15,7 +14,6 @@ HIDE(cuboUnitario);
 //SHOW - VISUALIZZA GLI OGGETTI CHE ABBIAMO NASCOSTO
 //SHOW(model);
 
-//MAP - MAPPA UNA FUNZIONE E NE ALTERA IL DOMINIO
 //DOMAIN - ACCETTA UNA LISTA DI COPPIE CHE INDICANO L'INIZIO E LA FINE DEL NOSTRO INTERVALLO 
 //RITORNA UNA FUNZIONE CHE VUOLE LA LISTA DELLA DIVISIONE DEGLI INTERVALLI
 var domain = DOMAIN([[1,5]])([4]);
@@ -28,19 +26,65 @@ DRAW(domain);
 
 HIDE(domain);
 
+//DISEGNA UNA LINEA
+var drawLine = function(start,end,n,color){
+
+	start = start || 0;
+	end = end || 1;
+	n = n || 10;
+	color = color || [0,0,0];
+
+	var domain = DOMAIN([[start,end]])([n]);
+	DRAW(domain);
+	COLOR(color)(domain);
+
+};
+
+
 var domain1 = DOMAIN([[1.5,5.5],[1,3]])([4,2]);
 DRAW(domain1);
 
 HIDE(domain1);
+
+//DISEGNA UN PIANO
+var drawPlan = function(domain,n,m,color){
+
+	n = n || 10;
+	color = color || [0,1,0];
+	domain = [[0,1],[0,1]]
+
+	var domain = DOMAIN(domain)([n,n]);
+	DRAW(domain);
+	COLOR(color)(domain);
+
+};
+
 
 var domain2 = DOMAIN([[1.5,5.5],[1,3],[0,1]])([4,2,1]);
 DRAW(domain2);
 
 HIDE(domain2);
 
+//DISEGNA UN CUBO
+var drawCube = function(domain,n,color){
+
+	n = n || 10;
+	color = color || [0,1,0];
+	domain = [[0,1],[0,1],[0,1]]
+
+	var domain = DOMAIN(domain)([n,n,n]);
+	DRAW(domain);
+	COLOR(color)(domain);
+
+};
+
+
+//MAP - MAPPA UNA FUNZIONE E NE ALTERA IL DOMINIO
 //FUNZIONE MAP - UNA FUNZIONE DI ORDINE SUPERIORE CHE ACCETTA UNA FUNZIONE DI MAPPING CHE ACCETTA UN DOMINIO 
 //MAP(mapping)(domain)
 //INIZIAMO CON UN DOMINIO MONODIMENSIONALE IN 10 INTERVALLI DELL'INTERVALLO 0..1
+
+
 var domain3 = DOMAIN([[0,10]])([10]);
 var mapping = function(p){
 	var u = p[0];
@@ -51,197 +95,253 @@ DRAW(mapped);
 
 HIDE(mapped);
 
-//BISETTRICE DEL PRIMO QUADRANTE
-var bisettrice = function(p){
-	var u = p[0];
-	return [u,u];
-};
-var mapped = MAP(bisettrice)(domain3);
-DRAW(mapped);
-
-//COLOR([R,G,B])(model) - PER COLORARE IL MODELLO model
-COLOR([0,0,0])(mapped)
-
-HIDE(mapped);
 
 
-//FUNZIONE SINUSOIDALE
-var domain4 = DOMAIN([[0,2*PI]])([20]);
-var sinusoide = function(p){
-	var u = p[0];
-	return [u,SIN(u)];
-};
-var mapped = MAP(sinusoide)(domain4);
-DRAW(mapped);
+//DISEGNA UNA BISETTRICE DEL PRIMO QUADRANTE
+var drawBisettrice = function(start,end,n,color){
 
-COLOR([0,0,0])(mapped);
+	start = start || 0;
+	end = end || 1;
+	n = n || 10;
+	color = color || [0,0,0];
 
-HIDE(mapped);
-
-//CIRCONFERENZA
-
-var drawCircle = function(r,n){
-
-	var domain = DOMAIN([[0,2*PI]])([n]);
-
-	var cerchio = function(p){
+	var mapping = function(p){
 		var u = p[0];
-		return [r*Math.cos(u),
+		return [u,u];
+	};
+
+
+	var domain = DOMAIN([[start,end]])([n]);
+	var mapped = MAP(mapping)(domain);
+
+	DRAW(mapped);
+	COLOR(color)(mapped);
+
+};
+
+
+//DISEGNA UNA SINUSOIDE
+var drawSinusoide = function(start,end,n,color){
+
+	start = start || 0;
+	end = end || 2;
+	n = n || (end-start)*20;
+	color = color || [0,0,0];
+
+	var mapping = function(p){
+		var u = p[0];
+		return [u,SIN(u)];
+	};
+
+
+	var domain = DOMAIN([[start*PI,end*PI]])([n]);
+	var mapped = MAP(mapping)(domain);
+
+	DRAW(mapped);
+	COLOR(color)(mapped);
+
+};
+
+//CIRCONFERENZA CON CENTRO NELL'ORIGINE
+
+var drawCircle = function(r,color){
+
+	r = r || 1;
+	color = color || [0,0,0];
+
+	var domain = DOMAIN([[0,2*PI]])([r*15]);
+
+	var mapping = function(p){
+		var u = p[0];
+		return [
+		r*Math.cos(u),
 		r*Math.sin(u)
 		];
 	};
 
-	var mapped = MAP(cerchio)(domain);
+	var mapped = MAP(mapping)(domain);
 
 	DRAW(mapped);
-	COLOR([0,0,0])(mapped);
+	COLOR(color)(mapped);
 
 };
 
-//CILINDRO
+//SFERA CON CENTRO NELL'ORIGINE
+var drawSfera = function(r,color){
 
-var drawCilinder = function(r,h,n,m,color){
 	r = r || 1;
-	h = h || 1;
-	n = n || 36*2;
-	m = m || 36;
+	color = color || [0,1,0];
+
+	var domain = DOMAIN([[0,PI],[0,2*PI]])([r*40,r*60]);
+
+	var mapping = function(p){
+		var u = p[0];
+		var v = p[1];
+
+		return [
+		r*SIN(u)*COS(v),
+		r*SIN(u)*SIN(v),
+		r*COS(u)
+		];
+	};
+
+	var mapped = MAP(mapping)(domain);
+
+	DRAW(mapped);
+	COLOR(color)(mapped);
+
+};
+
+//CUBO CENTRATO NELLO'ORIGINE
+var drawCube = function(l,n,color){
+	
+	l = l || 1;
+	n = n || l;	
+	halfl = (l/2);
+	alert(halfl);
+
+	color = color || [0,1,0];
+
+	domain = [[-halfl,halfl],[-halfl,halfl],[-halfl,halfl]];
+
+	var domain = DOMAIN(domain)([n,n,n]);
+	DRAW(domain);
+	COLOR(color)(domain);
+
+};
+
+//OPPURE TRAMITE LA FUNZIONE TRANSLATE/T E CUBOID
+/*
+ *TRANSLATE(array id delle dimensioni)(array dei valori di traslazione)(modello da translare)
+ *clona il modello da translare, lo transla e lo ritorna!!!
+*/
+
+var drawCube = function(l,color) {
+
+  var l = l || 1;
+  var color = color || [0,1,0];
+  var halfl = l/2;
+  
+  var cubo = TRANSLATE([0,1,2])([-halfl,-halfl,-halfl])(CUBOID([l,l,l]));
+  
+  DRAW(cubo);
+  COLOR(color)(cubo);
+  
+};
+
+//CONO
+var drawCono = function(r,h,color) {
+	r = r || 1;
+	h = h || 2;
+	n = r*30;
+	m = n*2;
 	color = color || [0,1,0];
 
 	var domain = DOMAIN([[0,2*PI],[0,h]])([n,m]);
 
-	var cilindro = function(p){
-		var u = p[0]; 
-		var v = p[1]; 
-
+	var mapping = function(p) {
+		var u = p[0];
+		var v = p[1];
 		return [
-		r*Math.cos(u),
-		r*Math.sin(u),
+		r * ((h-v)/h) * COS(u), 
+		r * ((h-v)/h) * SIN(u), 
 		v
 		];
 	};
 
-	var mapped = MAP(cilindro)(domain);
+	var mapped = MAP(mapping)(domain);
 
 	DRAW(mapped);
 	COLOR(color)(mapped);
 
 };
 
-//SFERA CENTRATA NELL'ORIGINE 
-var drawSfera = function (r,n,m,color) {  
+//DISEGNA UN TOROIDE
+
+var drawToro = function (rInterno, rEsterno, color) {
+	rInterno = rInterno || 1;
+	rEsterno = rEsterno || 2;
+
+	n = rInterno*40;
+	m = rEsterno*20;
+
+	color = color || [0,1,0];
+
+	var domain = DOMAIN([[0,2*PI],[0,2*PI]])([n,m]);
+
+	var mapping = function(p) {
+		var u = p[0];
+		var v = p[1];
+
+		return [
+		(rEsterno + rInterno*COS(v))*COS(u),
+		(rEsterno + rInterno*COS(v))*SIN(u),
+		rInterno*SIN(v)
+		];
+	};
+
+	var mapped = MAP(mapping)(domain);
+	DRAW(mapped);
+	COLOR(color)(mapped);
+	
+};
+
+//MEZZA SFERA
+var drawHalfSphere = function(r,color){
+
 	r = r || 1;
-  n = n || 36;
-  m = m || 74;
-  color = color || [1,0,0];
+	color = color || [0,1,0];
 
-  var domain = DOMAIN([[0,PI], [0,2*PI]])([n,n*2]);
-  var mapping = function (p) {
-    var u = p[0];
-    var v = p[1];
+	var domain = DOMAIN([[0,PI/2],[0,2*PI]])([r*40,r*60]);
 
-    return [
-      r * SIN(u) * COS(v),
-      r * SIN(u) * SIN(v),
-      r * COS(u)
-    ];
-  };
-  
-  var mapped =  MAP(mapping)(domain);
-  DRAW(mapped);
+	var mapping = function(p){
+		var u = p[0];
+		var v = p[1];
+
+		return [
+		r*SIN(u)*COS(v),
+		r*SIN(u)*SIN(v),
+		r*COS(u)
+		];
+	};
+
+	var mapped = MAP(mapping)(domain);
+
+	DRAW(mapped);
 	COLOR(color)(mapped);
 };
 
 
-//FUNZIONE CHE DISEGNA UN CUBO TRASLATO NELL'ORIGINE
-var drawCuboTraslato = function(r,color) {
-  var newRaggio = r || 1;
-  var newColor = color || [1,0,0];
-  var spigolo = newRaggio * (2/Math.sqrt(3));
-  var halfSpigolo = spigolo/2;
-  
-  /*
-	TRANSLATE(array id delle dimensioni)(array dei valori di traslazione)(modello da translare)
-	clona il modello da translare, lo transla e lo ritorna!!!
-  */
-  var cuboDisegna = TRANSLATE([0,1,2])([-halfSpigolo,-halfSpigolo,-halfSpigolo])(CUBOID([spigolo,spigolo,spigolo]));
-  
-  DRAW(cuboDisegna);
-  COLOR(newColor)(cuboDisegna);
-  
-  return cuboDisegna;
-};
+//CONO CON DUE RAGGI CENTRATO NELL'ORIGINE
+var drawCono = function(rInf,rSup,h,color){
 
+	rSup = rSup || 1;
+	rInf = rInf || 2;
+	h = h || 2;
+	n = (rInf+rSup)*15;
+	m = n/2;
+	color = color || [0,1,0];
 
-/* DISEGNA UN TOROIDE */
+	var domain = DOMAIN([[0,2*PI],[0,h]])([n,m]);
 
-var drawToro = function (rInterno, rEsterno, n,m,color) {
-	rInterno = rInterno || 1;
-	rEsterno = rEsterno || 5;
-	n = n || 36;
-	m = m || 36*2;
-	color = color || [1,0,0];
-
-	var dominioToro = DOMAIN([[0,2*PI],[0,2*PI]])([n,m]);
-	var mappingToro = function(p) {
+	var mapping = function(p) {
 		var u = p[0];
 		var v = p[1];
-		return [(rEsterno + rInterno*COS(v))*COS(u), (rEsterno + rInterno*COS(v))*SIN(u), rInterno*SIN(v)];
+		return [
+		((rInf - rInf*(v/h) + rSup*(v/h))) * COS(u), 
+		((rInf - rInf*(v/h) + rSup*(v/h))) * SIN(u), 
+		v
+		];
 	};
 
-	var mappedToro = MAP(mappingToro)(dominioToro);
-	DRAW(mappedToro);
-	COLOR(color)(mappedToro);
+	var mapped = MAP(mapping)(domain);
 
-	return mappedToro;	
+	DRAW(mapped);
+	COLOR(color)(mapped);
 };
 
-/* DISEGNA UN TOROIDE DA UN CILINDRO ESISTENTE
+//
 
-var drawToroFromCilindro = function (modelloCilindro, rEsterno, n, color) {
-	modelloCilindro = modelloCilindro || drawCilinder();
-	rEsterno = rEsterno || 5;
-	n = n || 36;
-	color = color || [1,0,0];
-
-	var mappingToro = function(p) {
-		var u = p[0];
-		var v = p[1];
-		var w = p[2];
-		return [(u+rEsterno)*SIN(w*4), (v+rEsterno)*COS(w*4), rEsterno*SIN(v)];
-	};
-
-	var mappedToro = MAP(mappingToro)(modelloCilindro);
-	DRAW(mappedToro);
-	COLOR(color)(mappedToro);
-	
-	return mappedToro;	
-};
-
-*/
-
-/* DISEGNA UN CONO */
-
-var drawCono = function(r,h,n,m,color) {
-	r = r || 1;
-	h = h || 1;
-	n = n || 36;
-	m = m || 36*2;
-	color = color || [1,0,0];
-
-	var dominioCircle = DOMAIN([[0,2*PI],[0,h]])([n,m]);
-
-	var mappingCircle = function(p) {
-		var u = p[0];
-		var v = p[1];
-		return [r * COS(u) * ((h-v)/h), r * SIN(u) * ((h-v)/h), v];
-	};
-
-	var mappedCircle = MAP(mappingCircle)(dominioCircle);
-	DRAW(mappedCircle);
-	COLOR(color)(mappedCircle);
-
-	return mappedCircle;
-};
 
 
 /*
@@ -266,13 +366,15 @@ DRAW(SKELETON(1)(quad));
 
 //SIMPLEXGRID - UNA GRIGLIA DI SIMPLESSI CONCATENATI
 //LINEE SPEZZATE - 1SIMPLESSO -1SIMPLESSO +1SIMPLESSO ECC..
-DRAW(SIMPLEXGRID([[1,-1, 1, -1, 1]]))
+DRAW(SIMPLEXGRID([[1,-1, 1, -1, 1]]));
 
-//STRISCIA DI LINEE - REPLICA RESTITUISCE UN'ARRAY CON GLI ELEMENTI PASSATI COME PARAMETRO REPLICATI N VOLTE
-DRAW(SIMPLEXGRID([REPLICA(10)([1,-1])]))
+//REPLICA(N)(VALORE) - RESTITUISCE UN'ARRAY DEL VALORE REPLICATO N VOLTE
+//FA IL CONCAT DEL VALORE SU UN NUOVO ARRAY DI DIMENSIONE N
+//STRISCIA DI LINEE
+DRAW(SIMPLEXGRID([REPLICA(10)([1,-1])]));
 
 //QUADRATO
-DRAW(SIMPLEXGRID([[1],[1]]))
+DRAW(SIMPLEXGRID([[1],[1]]));
 
 //STRISCIA DI QUADRATI
 DRAW(SIMPLEXGRID([REPLICA(10)([[1],[1]])]))
