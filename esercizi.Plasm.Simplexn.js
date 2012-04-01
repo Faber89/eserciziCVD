@@ -318,11 +318,10 @@ var drawCono = function(rInf,rSup,h,color){
 	rSup = rSup || 1;
 	rInf = rInf || 2;
 	h = h || 2;
-	n = (rInf+rSup)*15;
-	m = n/2;
+	n = (rInf+rSup)*10;
 	color = color || [0,1,0];
 
-	var domain = DOMAIN([[0,2*PI],[0,h]])([n,m]);
+	var domain = DOMAIN([[0,2*PI],[0,h]])([n,n]);
 
 	var mapping = function(p) {
 		var u = p[0];
@@ -340,8 +339,7 @@ var drawCono = function(rInf,rSup,h,color){
 	COLOR(color)(mapped);
 };
 
-//
-
+//CUPOLA
 
 
 /*
@@ -349,35 +347,56 @@ var drawCono = function(rInf,rSup,h,color){
 */
 
 //DISEGNO UN QUADRATO UTILIZZANDO SIMPLICIALCOMPLEX
+//CENTRATO NELL'ORIGINE
+var drawQuad = function(l){
+
+	var l = l || 1;
+
+	var quad = new SIMPLICIALCOMPLEX
+		([[0,0],[l,0],[l,l],[0,l]])
+		([[0,1,3],[1,2,3]]);
+
+	var quadT = T([0,1])([-l/2,-l/2])(quad);
+
+	DRAW(quadT);
+};
 
 var quad = new SIMPLICIALCOMPLEX([[0,0],[1,0],[1,1],[0,1]])([[0,1,3],[1,2,3]]);
 
 DRAW(quad);
-
-// RIDEFINIZIONE DI SIMPLEXGRID
-SIMPLEXGRID = function (quotes) {
-    return p.simplexGrid(quotes);
-};
 
 HIDE(quad);
 
 //POSSO PRENDERE UNO SCHELETRO DEL QUADRATO
 DRAW(SKELETON(1)(quad));
 
+// RIDEFINIZIONE DI SIMPLEXGRID
 //SIMPLEXGRID - UNA GRIGLIA DI SIMPLESSI CONCATENATI
 //LINEE SPEZZATE - 1SIMPLESSO -1SIMPLESSO +1SIMPLESSO ECC..
-DRAW(SIMPLEXGRID([[1,-1, 1, -1, 1]]));
+
+SIMPLEXGRID = function (quotes) {
+    return p.simplexGrid(quotes);
+};
 
 //REPLICA(N)(VALORE) - RESTITUISCE UN'ARRAY DEL VALORE REPLICATO N VOLTE
 //FA IL CONCAT DEL VALORE SU UN NUOVO ARRAY DI DIMENSIONE N
-//STRISCIA DI LINEE
+//DISEGNA UNA LINEA SPEZZATA CHE PARTE DALL'ORIGINE
+var lineaSpezzata = function(l,spazio,lunghezza){
+
+	l = l || 1;
+	spazio = -spazio || -1;
+	lunghezza = lunghezza || 3;
+
+	return SIMPLEXGRID([REPLICA(lunghezza)([l,spazio])]);
+}
+
+DRAW(lineaSpezzata(1,1,9));
+
+//STRISCIA DI LINEE O LINEA SPEZZATA
 DRAW(SIMPLEXGRID([REPLICA(10)([1,-1])]));
 
 //QUADRATO
 DRAW(SIMPLEXGRID([[1],[1]]));
-
-//STRISCIA DI QUADRATI
-DRAW(SIMPLEXGRID([REPLICA(10)([[1],[1]])]))
 
 //CUBO
 DRAW(SIMPLEXGRID([[1],[1],[1]]))
