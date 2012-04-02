@@ -340,12 +340,38 @@ var drawCono = function(rInf,rSup,h,color){
 };
 
 //CUPOLA
+var drawDome = function(rInf,rSup,color){
+	rSup = rSup || 1;
+	rInf = rInf || 2;
+	n = (rInf+rSup)*10;
+	color = color || [0,1,0];
 
+	var startDomain = Math.asin(rSup/rInf);
+
+	var domain = DOMAIN([[startDomain,PI/2],[0,2*PI]])([n,n]);
+
+	var mapping = function(p){
+		var u = p[0];
+		var v = p[1];
+
+		return [
+		rInf*SIN(u)*COS(v),
+		rInf*SIN(u)*SIN(v),
+		rInf*COS(u)
+		];
+	};
+
+	var mapped = MAP(mapping)(domain);
+
+	DRAW(mapped);
+	COLOR(color)(mapped);
+};
 
 /*
  * SIMPLEXN
 */
 
+//SIMPLICIALCOMPLEX - 
 //DISEGNO UN QUADRATO UTILIZZANDO SIMPLICIALCOMPLEX
 //CENTRATO NELL'ORIGINE
 var drawQuad = function(l){
@@ -415,24 +441,28 @@ DRAW(SIMPLEXGRID( [REPLICA(10)([1,-1]), REPLICA(10)([1,-1])] ))
 DRAW(SIMPLEXGRID([[20],[20]]))
 
 // CUBO..3d cubi su tutto
-SIMPLEXGRID( [REPLICA(10)([1,-1]), REPLICA(10)([1,-1]), REPLICA(10)([1,-1])] )
+DRAW(SIMPLEXGRID( [REPLICA(10)([1,-1]), REPLICA(10)([1,-1]), REPLICA(10)([1,-1])] ))
 
 // oppure
-SIMPLEXGRID( REPEAT(3)(REPLICA(10)([1,-1])) )
+DRAW(SIMPLEXGRID( REPEAT(3)(REPLICA(10)([1,-1])) ))
 
 // SCHELETRO DEL CUBO 3D ???
-quad10 = SKELETON(3)(SIMPLEXGRID( REPEAT(3)(REPLICA(10)([1,-1])) ));
+var quad10 = SKELETON(3)(SIMPLEXGRID( REPEAT(3)(REPLICA(10)([1,-1])) ));
 
 // TETRAEDO UNITARIO
 
-var tetra = SIMPLICIALCOMPLEX([[0,0,1],[1,0,0],[0,1,0],[1,1,1]])([[0,1,2,3]]);
+var drawTetra = function(){
+	var tetra = SIMPLICIALCOMPLEX([[0,0,1],[1,0,0],[0,1,0],[1,1,1]])([[0,1,2,3]]);
 
-DRAW(tetra)
+	DRAW(tetra);
+}
 
-// Tetraedro centrato nell'origine inscrivibile in una sfera di raggio r
+//TETRAEDO UNITARIO CENTRATO NELL'ORIGINE
+//INSCRIVIBILE IN UNA SFERA DI RAGGIO R 
 var drawTetraedro = function(r, color) {
+
   r = r || 1;
-  color = color || [0,0,1];
+  color = color || [0,1,0];
 
   var lSpigolo = r*SQRT(8/3);
   var primoVertice = [0,0,r];
@@ -451,5 +481,76 @@ var drawTetraedro = function(r, color) {
 };
 
 
-//ICOSAEDRO
+//OTTAEDRO
+var drawOttaedro = function(r, color) {
 
+	r = r || 1;
+	color = color || [0,1,0];
+
+	var lSpigolo = r * SQRT(2);
+	var listaVertici = [[0,0,r],[r,0,0],[0,r,0],[-r,0,0],[0,-r,0],[0,0,-r]];
+	var listaFacce = [[0,1,2],[0,2,3],[0,3,4],[0,4,1],[2,1,5],[3,2,5],[4,3,5],[1,4,5]];
+
+	var modelOttaedro = SIMPLICIALCOMPLEX(listaVertici)(listaFacce);
+	DRAW(modelOttaedro);
+	COLOR(color)(modelOttaedro);
+
+	return modelOttaedro;
+};
+
+/*
+//DODECAEDRO
+var drawDodecaedro = function(r,color) {
+	r = r || 1;
+	color = color || [0,1,0];
+
+	var listaVertici = [[0,0,r],[r,0,0],[0,r,0],[-r,0,0],[0,-r,0],[0,0,-r]];
+
+
+
+};
+*/
+
+
+//ISOCAEDRO
+var drawIcosaedro = function(r, color) {
+	r = r || 1;
+	color = color || [0,1,0];
+
+	var spigolo = SQRT( 2*r*((1/2) - (SQRT(5)/10)) );
+	var radiusE = 2 * r * SQRT(5) * (1/5);
+	// var altezzaFromPolo = 2 * r * ((1/2) - (SQRT(5)/10));
+
+	var poloNord = [0,0,r];
+	var poloSud = [-poloNord[0], -poloNord[1], -poloNord[2]];
+
+	var pentagonoNord = [];
+	var pentagonoSud = [];
+	var i = 0;
+
+	for (i = 0; i < 5; i++) {
+		// pentagonoNord[i] = [radiusE * COS( (PI/2) + i * ((2/5)*PI) ), radiusE * SIN( (PI/2) + i * ((2/5)*PI) ), poloNord[2] - altezzaFromPolo];
+		pentagonoNord[i] = [radiusE * COS( (PI/2) + i * ((2/5)*PI) ), radiusE * SIN( (PI/2) + i * ((2/5)*PI) ), radiusE/2];
+	}
+
+	for (i = 0; i < 5; i++) {
+		// pentagonoSud[i] = [radiusE * COS( ((2/3)*PI) + i * ((2/5)*PI) ), radiusE * SIN( ((2/3)*PI) + i * ((2/5)*PI) ), altezzaFromPolo + poloSud[2]];
+		pentagonoSud[i] = [radiusE * COS( ((3/2)*PI) + i * ((2/5)*PI) ), radiusE * SIN( ((3/2)*PI) + i * ((2/5)*PI) ), -(radiusE/2)];
+	}
+
+	var listaVertici = [];
+	listaVertici.push(poloNord);
+	for (i = 0; i < 5; i++) { listaVertici.push(pentagonoNord[i]); }
+	for (i = 0; i < 5; i++) { listaVertici.push(pentagonoSud[i]); }
+	listaVertici.push(poloSud);
+
+	var listaFacce = [[0,1,2],[0,2,3],[0,3,4],[0,4,5],[0,5,1],
+					[9,1,8],[1,5,8],[8,5,7],[7,5,4],[7,4,6],[6,4,3],[6,3,10],[3,2,10],[10,2,9],[2,1,9],
+					[6,11,7],[7,11,8],[8,11,9],[9,11,10],[10,11,6]];
+	var isocaedroModel = SIMPLICIALCOMPLEX(listaVertici)(listaFacce);
+
+	DRAW(isocaedroModel);
+	COLOR(color)(isocaedroModel);
+
+	return isocaedroModel;
+};
