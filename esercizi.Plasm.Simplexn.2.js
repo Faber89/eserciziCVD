@@ -164,8 +164,9 @@ var drawGrigliaSfericaDiCilindri = function(r,numCil,h){
 		columns.push(T([0,1]) ([r*COS(trasl), r*SIN(trasl)]) (cilindro));
 	}
 	
-	var colonnato = STRUCT(columns);	
-	DRAW(colonnato);
+	var colonnato = STRUCT(columns);
+	return colonnato;	
+	//DRAW(colonnato);
 };
 
 var drawPantheon = function(){
@@ -199,6 +200,9 @@ var testBase = function() {
 					[-0.25, 1]
 					]);
 
+		var dominioBase = DOMAIN([[0,1],[9.2,10],[0.25, 1]])([2,8,10]);
+		var dominio = STRUCT(REPLICA(10)([dominioBase,T([0])([3])]));
+
 		var mapping = function(p) {
 			var u = p[0];
 			var v = p[1];
@@ -207,8 +211,8 @@ var testBase = function() {
 			var angolo = (p[0]*2*PI)/40;
 
 			return [
-				v * COS(angolo),
 				v * SIN(angolo),
+				v * COS(angolo),
 				w
 			];
 		};
@@ -220,4 +224,16 @@ var testBase = function() {
 		DRAW(baseFiga);
 
 		return baseFiga;
+};
+
+
+//SEMI-SCHIFO
+var semiSchifo = function(){
+	DRAW(testBase());
+	var dome = drawSolidDome(6,1,2);
+	dome = T([2])([1.25+5])(dome);
+	dome = COLOR([1,1,1])(dome);
+	DRAW(dome);
+	var colon = T([2])([1.25])(drawGrigliaSfericaDiCilindri(7,10,5));
+	DRAW(colon);
 };
