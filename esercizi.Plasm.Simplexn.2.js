@@ -125,7 +125,7 @@ var cilindroPieno = function(r,h,n,m,p,color) {
 	r = r || 1;
 	h = h || 1;
 
-	n = n || r*30;
+	n = n || r*15;
 
 	m = m || 1;
 	p = p || 1;
@@ -176,4 +176,48 @@ var drawPantheon = function(){
 }
 
 
+//PROVA DI BASE
+var testBase = function() {
 
+	var base = STRUCT([cilindroPieno(10,0.25),T([2])([0.25]),
+		cilindroPieno(9.8,0.25),T([2])([0.25]),
+		cilindroPieno(9.6,0.25),T([2])([0.25]),
+		cilindroPieno(9.4,0.25),T([2])([0.25]),
+		cilindroPieno(9.2,0.25)]);
+
+
+	var anelloDiCubi = function (raggio,numCubi,lunghezza,altezza){
+		
+		var raggio = raggio || 10;
+		var numCubi = numCubi || 10;
+		var lunghezza = lunghezza || 3;
+		var altezza = altezza || 1;
+
+		var domino = SIMPLEX_GRID([
+					REPLICA(10)([1,-3]), 
+					[-9.2,0.8], 
+					[-0.25, 1]
+					]);
+
+		var mapping = function(p) {
+			var u = p[0];
+			var v = p[1];
+			var w = p[2];
+
+			var angolo = (p[0]*2*PI)/40;
+
+			return [
+				v * COS(angolo),
+				v * SIN(angolo),
+				w
+			];
+		};
+
+		return cubiRigirati = MAP(mapping)(domino);
+	};
+
+		var baseFiga = STRUCT([base,anelloDiCubi()]);
+		DRAW(baseFiga);
+
+		return baseFiga;
+};
