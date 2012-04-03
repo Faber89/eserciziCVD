@@ -43,8 +43,6 @@ var helicoid = function(radius, h, turns, n, m){
 	return object;
 };
 
-DRAW(helicoid(radius=1, h=3, turns=6, n=180, m=3));
-
 
 //ELICOIDE CON SPESSORE
 var solidHelicoid = function(width, radius, h, turns, n, m, p){
@@ -84,8 +82,6 @@ var solidHelicoid = function(width, radius, h, turns, n, m, p){
 	return MAP(mapping)(domain);
 
 }
-
-DRAW(solidHelicoid(0.05, 1, 3));
 
 
 //CUPOLA CON SPESSORE
@@ -155,36 +151,28 @@ var cilindroPieno = function(r,h,n,m,p,color) {
 
 //BASE DI CILINDRI SFERICA
 var drawGrigliaSfericaDiCilindri = function(r,numCil,h){
-	var cilindro = cilindroPieno(1,h);
-	var angolo = (2*PI)/numCil;
-
-
-	return STRUCT(
-		REPLICA(numCil)
-		([cilindroPieno(r,h),T([0,1])([r*COS(angolo),r*SIN(angolo)])])
-		);
-};
-
-var drawGrigliaSfericaDiCilindri2 = function(r,numCil,h){
 	r = r || 11;
 	numCil = numCil || 8;
 	h = h || 20;
+
 	var cilindro = cilindroPieno(1,h);
 	var angolo = (2 * PI)/numCil;
 	var columns = [];
-for (var i = 0; i < numCil; i++) {
-	var trasl = i * angolo;
-	columns.push(T([0,1]) ([r*COS(trasl), r*SIN(trasl)]) (cilindro));}
-var colonnato = STRUCT(columns);
-DRAW(colonnato);
+
+	for (var i = 0; i < numCil; i++) {
+		var trasl = i * angolo;
+		columns.push(T([0,1]) ([r*COS(trasl), r*SIN(trasl)]) (cilindro));
+	}
+	
+	var colonnato = STRUCT(columns);	
+	DRAW(colonnato);
 };
 
 var drawPantheon = function(){
-var dome = drawSolidDome(10,3,2,[1,0,0]);
-var finalDome = T([2])([20])(dome);
-DRAW(finalDome);
-drawGrigliaSfericaDiCilindri2();
-
+	var dome = drawSolidDome(10,1,2);
+	var finalDome = T([2])([20])(dome);
+	DRAW(finalDome);
+	drawGrigliaSfericaDiCilindri();
 }
 
 
