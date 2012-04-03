@@ -88,7 +88,6 @@ var solidHelicoid = function(width, radius, h, turns, n, m, p){
 DRAW(solidHelicoid(0.05, 1, 3));
 
 
-
 //CUPOLA CON SPESSORE
 var drawSolidDome = function(rInf,rSup,width,color){
 	rSup = rSup || 1;
@@ -111,9 +110,9 @@ var drawSolidDome = function(rInf,rSup,width,color){
 		var w = p[2];
 
 		return [
-		rInf*SIN(u)*COS(v),
-		rInf*SIN(u)*SIN(v),
-		w + rInf*COS(u)
+		(rInf +w)*SIN(u)*COS(v),
+		(rInf +w)*SIN(u)*SIN(v),
+		(rInf +w)*COS(u)
 		];
 	};
 
