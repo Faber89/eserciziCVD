@@ -192,6 +192,29 @@ var drawSfera = function(r,color){
 
 };
 
+//CILINDRO
+
+var drawCilinder = function(r,h,n,color){
+
+	r = r || 1;
+	h = h || 2;
+	n = n || r*20;
+
+	var domain = DOMAIN([[0,2*PI],[0,h]])([n,n]);
+
+	var cilindro = function(p){
+		var u = p[0];
+		var v = p[1]; 
+
+		return [r*Math.cos(u),r*Math.sin(u), v];
+	};
+
+	var mapped = MAP(cilindro)(domain);
+
+	DRAW(mapped);
+	COLOR(color)(mapped);
+};
+
 //CUBO CENTRATO NELLO'ORIGINE
 var drawCube = function(l,n,color){
 	
@@ -510,7 +533,6 @@ var drawDodecaedro = function(r,color) {
 
 };
 */
-
 
 //ISOCAEDRO
 var drawIcosaedro = function(r, color) {
