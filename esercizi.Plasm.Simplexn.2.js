@@ -200,9 +200,6 @@ var testBase = function() {
 					[-0.25, 1]
 					]);
 
-		var dominioBase = DOMAIN([[0,1],[9.2,10],[0.25, 1]])([2,8,10]);
-		var dominio = STRUCT(REPLICA(10)([dominioBase,T([0])([3])]));
-
 		var mapping = function(p) {
 			var u = p[0];
 			var v = p[1];
